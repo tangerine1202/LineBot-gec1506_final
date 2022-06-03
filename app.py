@@ -2,7 +2,8 @@ import os
 from pprint import pprint
 from dotenv import load_dotenv
 
-import placeApi
+import services
+import format_output
 
 from flask import Flask, request, abort
 
@@ -13,7 +14,7 @@ from linebot.exceptions import (
     InvalidSignatureError
 )
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage,
+    MessageEvent, FollowEvent, TextMessage, LocationMessage
 )
 
 # load the environment variables from .env file
@@ -45,32 +46,59 @@ def callback():
 
 
 @handler.add(MessageEvent, message=TextMessage)
-def handle_message(event):
-    text = event.message.text
-    # text: "add 7-11"
-    if text.startswith('add'):
-        data = add_place('7-11')
+def handle_text_message(event):
+    text_message_handler(event)
 
-        res = format_add_place_output(data)
 
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=res)
-        )
-    elif text.startswith('find'):
-        data = get_place('7-11')
+@handler.add(MessageEvent, message=LocationMessage)
+def handle_location_message(event):
+    location_message_handler(event)
 
-        res = format_get_place_output(data)
 
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=res)
-        )
+@handler.add(FollowEvent)
+def handle_follow(event):
+    follow_handler(event)
 
-    line_bot_api.reply_message(
-        event.reply_token,
-        TextSendMessage(text=event.message.text)
-    )
+
+@app.route('/text')
+def text_message_handler(event=None):
+    line_id = event.source.user_id
+    user = services.get_user_from_line_id(line_id)
+
+    query = event.message.text
+    if query.startswith('greeting'):
+        data = services.greeting(user['id'])
+        line_msg = format_output.greeting(data)
+        line_bot_api.reply_message(event.reply_token, line_msg)
+    elif query.startswith('google'):
+        text = query.replace('google', '').strip()
+        data = services.google(text, user['lat'], user['lng'])
+        line_msg = format_output.google(data)
+        line_bot_api.reply_message(event.reply_token, line_msg)
+
+
+@app.route('/follow')
+def follow_handler(event=None):
+    line_id = event.source.user_id
+    data = services.get_user_from_line_id(line_id)
+    if data == None:
+        data = services.add_user(line_id)
+    else:
+        print('[info] User already exists, skip adding user')
+    line_msg = format_output.add_user(data)
+    line_bot_api.reply_message(event.reply_token, line_msg)
+
+
+@app.route('/location')
+def location_message_handler(event=None):
+    line_id = event.source.user_id
+    user = services.get_user_from_line_id(line_id)
+
+    lat = event.message.latitude
+    lng = event.message.longitude
+    data = services.set_location(user['id'], lat, lng)
+    line_msg = format_output.set_location(data)
+    line_bot_api.reply_message(event.reply_token, line_msg)
 
 
 if __name__ == '__main__':

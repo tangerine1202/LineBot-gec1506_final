@@ -42,10 +42,11 @@ def get_user_from_line_id(line_id):
     res = user_table.first(formula=formula)
     if not res:
         print('[error]: User not found')
-        res = None
-    result = {'id': res['id'], }
-    for key, value in res['fields'].items():
-        result[key] = value
+        result = None
+    else:
+        result = {'id': res['id'], }
+        for key, value in res['fields'].items():
+            result[key] = value
     return result
 
 

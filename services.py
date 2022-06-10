@@ -34,6 +34,16 @@ def google(text, lat, lng):
         'name': name,
         'address': address
     }
+
+    place_id = res['place_id']
+    nickname = res['name']
+    
+    add = {
+        'place_id': place_id,
+        'nickname': name,
+        # 'user_id': user_id
+    }
+    join_table.create(add)
     return result
 
 
@@ -42,10 +52,11 @@ def get_user_from_line_id(line_id):
     res = user_table.first(formula=formula)
     if not res:
         print('[error]: User not found')
-        res = None
-    result = {'id': res['id'], }
-    for key, value in res['fields'].items():
-        result[key] = value
+        result = None
+    else:
+        result = {'id': res['id'], }
+        for key, value in res['fields'].items():
+            result[key] = value
     return result
 
 
@@ -79,3 +90,18 @@ def set_location(user_id, lat, lng):
         'lng': lng,
     }
     return result
+
+def remove_place(name, line_id, lat, lng):
+    place = find_place(name, lat, lng)
+    place_id = place['candidates'][0]['place_id']
+    for record in join_table.all():
+        print(record)
+        print(line_id)
+        print(name)
+        if record['fields']['nickname'] == name and record['fields']['user_id'] == line_id:
+            join_table.delete(record['id'])
+            return True
+        elif record['fields']['user_id'] == line_id and record['fields']['place_id'] == place_id:
+            join_table.delete(record['id'])
+            return True
+    return False

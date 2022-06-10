@@ -1,5 +1,3 @@
-from audioop import add
-from typing import Text
 from linebot.models import (
     QuickReply, QuickReplyButton, LocationAction,
     TextSendMessage, LocationSendMessage

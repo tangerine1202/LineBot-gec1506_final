@@ -67,7 +67,7 @@ def text_message_handler(event=None):
 
     query = event.message.text
     if query.startswith('greeting'):
-        data = services.greeting(user['id'])
+        data = services.greeting(user['line_id'])
         line_msg = format_output.greeting(data)
         line_bot_api.reply_message(event.reply_token, line_msg)
     elif query.startswith('google'):

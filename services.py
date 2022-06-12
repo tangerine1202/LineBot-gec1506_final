@@ -99,33 +99,6 @@ def remove_place(name, line_id, lat, lng):
     return False
 
 
-def add_place(name, line_id, lat, lng):
-    place = find_place(name, lat, lng)
-    res = place['candidates'][0]
-    place_table_res = {
-        'place_id': res['place_id'],
-        'name': res['name'],
-        'address': res['formatted_address'],
-        'lat': str(res['geometry']['location']['lat']),
-        'lng': str(res['geometry']['location']['lng'])
-    }
-    join_table_res = {
-        'line_id': line_id,
-        'place_id': res['place_id'],
-        'nickname': name
-    }
-    for record in join_table.all():
-        if res['place_id'] == record['fields']['place_id']:
-            return False
-    for record in place_table.all():
-        if res['place_id'] == record['fields']['place_id']:
-            join_table.create(join_table_res)
-            return True
-    place_table.create(place_table_res)
-    join_table.create(join_table_res)
-    return True
-
-
 def get_place(line_id, only_user):
     name = None
     address = None
@@ -153,4 +126,32 @@ def get_place(line_id, only_user):
             'name': name,
             'address': address
         }
+    return result
+
+
+def add_place(line_id, lat, lng, name):
+    a = google(name, lat, lng)
+    i = place_table.all()
+    x = 1
+    for item in i:
+        if a['place_id'] == item['fields']['place_id']:
+            x = 0
+
+    if x == 1:
+        place_table.create(a)
+
+    j = join_table.all(fields=['line_id', 'place_id'])
+
+    x = 0
+    for item in j:
+        if a['place_id'] == item['fields']['place_id'] and line_id == item['fields']['line_id']:
+            x = 1
+
+    if x == 0:
+        join_table.create({'line_id': line_id, 'place_id': a['place_id'], 'nickname': name})
+
+    result = {
+        'name': a['name'],
+        'address': a['address']
+    }
     return result

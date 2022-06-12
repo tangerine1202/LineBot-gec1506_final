@@ -68,23 +68,25 @@ def set_location(data):
     )
     return line_msg
 
+
 def remove_place(data):
     if data == True:
         text = f'Remove successfully'
     else:
         text = f'Fail to remove. This place has not been added'
     line_msg = TextSendMessage(
-        text = text
+        text=text
     )
     return line_msg
 
+
 def add_place(data):
-    if data == True:
-        text = f'Add successfully'
-    else:
-        text = f'This place has been added'
+    title = 'Successfully add place.\n The place you add is shown below:\n\n'
+    name = data['name']
+    address = data['address']
+    content = f'{name}:\n {address}'
+
     line_msg = TextSendMessage(
-        text = text
+        text=title + content,
     )
     return line_msg
-    

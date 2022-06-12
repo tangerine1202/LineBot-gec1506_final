@@ -42,10 +42,12 @@ def get_user_from_line_id(line_id):
     res = user_table.first(formula=formula)
     if not res:
         print('[error]: User not found')
-        res = None
-    result = {'id': res['id'], }
-    for key, value in res['fields'].items():
-        result[key] = value
+        result = None
+    else:
+
+        result = {'id': res['id'], }
+        for key, value in res['fields'].items():
+            result[key] = value
     return result
 
 
@@ -79,3 +81,22 @@ def set_location(user_id, lat, lng):
         'lng': lng,
     }
     return result
+
+def get_place(user_id, only_user):
+	if only_user == True:
+        formula = f'FIND("{user_id}", user_id)'
+        records = join_table.first(formula=formula)
+	    #formula = match({"user_id":user_id})
+	    #records = join_table.first(formula=formula)
+        Place_id = records['place_id']
+        formula2 = f'FIND("{Place_id}", google_place_id)'
+        res = place_table.first(formula=formula2)
+        name = res['name']
+        address = res['address']
+        result = {
+            'name': name,
+            'address': address
+        }
+    #elif only_user == False:
+        
+	return result

@@ -76,6 +76,11 @@ def text_message_handler(event=None):
         line_msg = format_output.google(data)
         line_bot_api.reply_message(event.reply_token, line_msg)
 
+    elif query.startswith('get'):
+        data = services.get_place(user['id'], only_user=True)
+        line_msg = format_output.get_place(data)
+        line_bot_api.reply_message(event.reply_token, line_msg)
+
 
 @app.route('/follow')
 def follow_handler(event=None):

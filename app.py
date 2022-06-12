@@ -77,14 +77,15 @@ def text_message_handler(event=None):
         line_bot_api.reply_message(event.reply_token, line_msg)
     elif query.startswith('remove'):
         text = query.replace('remove', '').strip()
-        data = services.remove_place(text, user['id'], user['lat'],user['lng'])
+        data = services.remove_place(text, user['line_id'], user['lat'], user['lng'])
         line_msg = format_output.remove_place(data)
         line_bot_api.reply_message(event.reply_token, line_msg)
     elif query.startswith('add'):
         text = query.replace('add', '').strip()
-        data = services.add_place(text, user['id'], user['lat'], user['lng'])
+        data = services.add_place(text, user['line_id'], user['lat'], user['lng'])
         line_msg = format_output.add_place(data)
         line_bot_api.reply_message(event.reply_token, line_msg)
+
 
 @app.route('/follow')
 def follow_handler(event=None):

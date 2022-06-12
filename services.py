@@ -80,3 +80,46 @@ def set_location(user_id, lat, lng):
         'lng': lng,
     }
     return result
+
+
+def remove_place(name, line_id, lat, lng):
+    place = find_place(name, lat, lng)
+    place_id = place['candidates'][0]['place_id']
+    for record in join_table.all():
+        if record['fields'] == {}:
+            join_table.delete(record['id'])
+    for record in join_table.all():
+        if record['fields']['nickname'] == name and record['fields']['line_id'] == line_id:
+            join_table.delete(record['id'])
+            return True
+        elif record['fields']['line_id'] == line_id and record['fields']['place_id'] == place_id:
+            join_table.delete(record['id'])
+            return True
+    return False
+
+
+def add_place(name, line_id, lat, lng):
+    place = find_place(name, lat, lng)
+    res = place['candidates'][0]
+    place_table_res = {
+        'place_id': res['place_id'],
+        'name': res['name'],
+        'address': res['formatted_address'],
+        'lat': str(res['geometry']['location']['lat']),
+        'lng': str(res['geometry']['location']['lng'])
+    }
+    join_table_res = {
+        'line_id': line_id,
+        'place_id': res['place_id'],
+        'nickname': name
+    }
+    for record in join_table.all():
+        if res['place_id'] == record['fields']['place_id']:
+            return False
+    for record in place_table.all():
+        if res['place_id'] == record['fields']['place_id']:
+            join_table.create(join_table_res)
+            return True
+    place_table.create(place_table_res)
+    join_table.create(join_table_res)
+    return True

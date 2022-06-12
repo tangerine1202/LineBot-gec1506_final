@@ -75,7 +75,11 @@ def text_message_handler(event=None):
         data = services.google(text, user['lat'], user['lng'])
         line_msg = format_output.google(data)
         line_bot_api.reply_message(event.reply_token, line_msg)
-
+    elif query.startswith('add'):
+        name = query.replace('add', '').strip()
+        data = services.add_place(user['line_id'], user['lat'], user['lng'], name)
+        line_msg = format_output.add_place(data)
+        line_bot_api.reply_message(event.reply_token, line_msg)
 
 @app.route('/follow')
 def follow_handler(event=None):
@@ -99,7 +103,6 @@ def location_message_handler(event=None):
     data = services.set_location(user['id'], lat, lng)
     line_msg = format_output.set_location(data)
     line_bot_api.reply_message(event.reply_token, line_msg)
-
 
 if __name__ == '__main__':
     host = '0.0.0.0'

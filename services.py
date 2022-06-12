@@ -79,3 +79,30 @@ def set_location(user_id, lat, lng):
         'lng': lng,
     }
     return result
+
+def add_place(line_id, lat, lng, name):
+    a = google(name, lat, lng)
+    i = place_table.all()
+    x = 1
+    for item in i:
+        if a['place_id'] == item['fields']['place_id']:
+            x = 0
+
+    if x == 1:
+        place_table.create(a)
+
+    j = join_table.all(fields = ['line_id', 'place_id'])
+
+    x = 0
+    for item in j:
+        if a['place_id'] == item['fields']['place_id'] and line_id == item['fields']['line_id']:
+            x = 1
+    
+    if x == 0:
+        join_table.create({'line_id': line_id, 'place_id': a['place_id'], 'nickname': name})
+
+    result = {
+        'name': a['name'],
+        'address': a['address']
+    }
+    return result

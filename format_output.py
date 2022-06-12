@@ -54,3 +54,14 @@ def set_location(data):
         longitude=lng
     )
     return line_msg
+
+def add_place(data):
+    title = 'Successfully add place.\n The place you add is shown below:\n\n'
+    name = data['name']
+    address = data['address']
+    content = f'{name}:\n {address}'
+
+    line_msg = TextSendMessage(
+        text = title + content, 
+    )
+    return line_msg

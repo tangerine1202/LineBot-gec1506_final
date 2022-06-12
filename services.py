@@ -4,7 +4,7 @@ from pprint import pprint
 from dotenv import load_dotenv
 from pyairtable import Table
 
-from placeApi import find_place
+from place_api import find_place
 
 
 load_dotenv()

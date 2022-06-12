@@ -3,6 +3,7 @@ from pprint import pprint
 
 from dotenv import load_dotenv
 from pyairtable import Table
+from pyairtable.formulas import match
 
 from place_api import find_place
 
@@ -44,6 +45,12 @@ def get_user_from_line_id(line_id):
         print('[error]: User not found')
         result = None
     else:
+
+
+<< << << < HEAD
+== == == =
+
+>>>>>> > rubyliu
         result = {'id': res['id'], }
         for key, value in res['fields'].items():
             result[key] = value
@@ -123,3 +130,33 @@ def add_place(name, line_id, lat, lng):
     place_table.create(place_table_res)
     join_table.create(join_table_res)
     return True
+
+
+def get_place(line_id, only_user):
+    name = None
+    address = None
+    if only_user == True:
+        formula = match({"line_id": line_id})
+        record = join_table.first(formula=formula)
+        Place_id = record['fields']['place_id']
+        formula2 = match({"place_id": Place_id})
+        res = place_table.first(formula=formula2)
+        name = res['fields']['name']
+        address = res['fields']['address']
+    elif only_user == False:
+        for record in join_table.all():
+            if record['fields']['line_id'] != line_id:
+                Place_id = record['fields']['place_id']
+                formula2 = match({"place_id": Place_id})
+                res = place_table.first(formula=formula2)
+                name = res['fields']['name']
+                address = res['fields']['address']
+                break
+    if name == None and address == None:
+        result = None
+    else:
+        result = {
+            'name': name,
+            'address': address
+        }
+    return result

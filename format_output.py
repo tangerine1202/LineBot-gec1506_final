@@ -24,6 +24,21 @@ def google(data):
     return line_msg
 
 
+def get_place(data):
+    if data == None:
+        text = 'No place found'
+    else:
+        name = data['name']
+        address = data['address']
+        #lat = data['lat']
+        #lng = data['lng']
+        text = f'name: {name}\naddress: {address}\n'  # lat:  {lat}\nlng: {lng}'
+    line_msg = TextSendMessage(
+        text=text,
+    )
+    return line_msg
+
+
 def add_user(data):
     title = 'Successfully add user.\nPlease set your location first.'
 

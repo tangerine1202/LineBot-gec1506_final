@@ -45,12 +45,6 @@ def get_user_from_line_id(line_id):
         print('[error]: User not found')
         result = None
     else:
-
-
-<< << << < HEAD
-== == == =
-
->>>>>> > rubyliu
         result = {'id': res['id'], }
         for key, value in res['fields'].items():
             result[key] = value

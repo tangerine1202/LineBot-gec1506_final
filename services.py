@@ -108,16 +108,24 @@ def get_place(line_id, only_user):
         Place_id = record['fields']['place_id']
         formula2 = match({"place_id": Place_id})
         res = place_table.first(formula=formula2)
-        name = res['fields']['name']
-        address = res['fields']['address']
+        if res == None:
+            name = None
+            address = None
+        else:
+            name = res['fields']['name']
+            address = res['fields']['address']
     elif only_user == False:
         for record in join_table.all():
             if record['fields']['line_id'] != line_id:
                 Place_id = record['fields']['place_id']
                 formula2 = match({"place_id": Place_id})
                 res = place_table.first(formula=formula2)
-                name = res['fields']['name']
-                address = res['fields']['address']
+                if res == None:
+                    name = None
+                    address = None
+                else:
+                    name = res['fields']['name']
+                    address = res['fields']['address']
                 break
     if name == None and address == None:
         result = None

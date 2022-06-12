@@ -83,26 +83,32 @@ def set_location(user_id, lat, lng):
     }
     return result
 
-def get_place(user_id, only_user):
-	if only_user == True:
-	    formula = match({"user_id":user_id})
-	    record = join_table.first(formula=formula)
-	    Place_id = record['fields']['place_id']
-	    formula2 = match({"google_place_id":Place_id})
-	    res = place_table.first(formula=formula2)
-	    name = res['fields']['name']
-	    address = res['fields']['address']
-	elif only_user == False:
-	    for record in join_table.all():
-	        if record['fields']['user_id'] != user_id:
-	             Place_id = record['fields']['place_id']
-	             formula2 = match({"google_place_id":Place_id})
-	             res = place_table.first(formula=formula2)
-	             name = res['fields']['name']
-	             address = res['fields']['address']
-	             break
-	result = {
-	    'name': name,
-	    'address': address
-	}
-	return result
+
+def get_place(line_id, only_user):
+    name = None
+    address = None
+    if only_user == True:
+        formula = match({"line_id": line_id})
+        record = join_table.first(formula=formula)
+        Place_id = record['fields']['place_id']
+        formula2 = match({"place_id": Place_id})
+        res = place_table.first(formula=formula2)
+        name = res['fields']['name']
+        address = res['fields']['address']
+    elif only_user == False:
+        for record in join_table.all():
+            if record['fields']['line_id'] != line_id:
+                Place_id = record['fields']['place_id']
+                formula2 = match({"place_id": Place_id})
+                res = place_table.first(formula=formula2)
+                name = res['fields']['name']
+                address = res['fields']['address']
+                break
+    if name == None and address == None:
+        result = None
+    else:
+        result = {
+            'name': name,
+            'address': address
+        }
+    return result

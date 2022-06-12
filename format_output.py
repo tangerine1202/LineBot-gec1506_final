@@ -25,12 +25,16 @@ def google(data):
     )
     return line_msg
 
+
 def get_place(data):
-    name = data['name']
-    address = data['address']
-    #lat = data['lat']
-    #lng = data['lng']
-    text = f'name: {name}\naddress: {address}\n'#lat:  {lat}\nlng: {lng}'
+    if data == None:
+        text = 'No place found'
+    else:
+        name = data['name']
+        address = data['address']
+        #lat = data['lat']
+        #lng = data['lng']
+        text = f'name: {name}\naddress: {address}\n'  # lat:  {lat}\nlng: {lng}'
     line_msg = TextSendMessage(
         text=text,
     )

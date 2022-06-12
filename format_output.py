@@ -64,3 +64,14 @@ def remove_place(data):
         text = text
     )
     return line_msg
+
+def add_place(data):
+    if data == True:
+        text = f'Add successfully'
+    else:
+        text = f'This place has been added'
+    line_msg = TextSendMessage(
+        text = text
+    )
+    return line_msg
+    

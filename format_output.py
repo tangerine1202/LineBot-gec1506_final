@@ -30,7 +30,7 @@ def get_place(data):
     address = data['address']
     #lat = data['lat']
     #lng = data['lng']
-    text = f'name: {name}\naddress: {address}\nlat: ' #{lat}\nlng: {lng}'
+    text = f'name: {name}\naddress: {address}\n'#lat:  {lat}\nlng: {lng}'
     line_msg = TextSendMessage(
         text=text,
     )

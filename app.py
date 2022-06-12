@@ -75,7 +75,6 @@ def text_message_handler(event=None):
         data = services.google(text, user['lat'], user['lng'])
         line_msg = format_output.google(data)
         line_bot_api.reply_message(event.reply_token, line_msg)
-
     elif query.startswith('get'):
         data = services.get_place(user['id'], only_user=True)
         line_msg = format_output.get_place(data)
